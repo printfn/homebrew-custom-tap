@@ -11,7 +11,7 @@ class Checkmake < Formula
 
   def install
     ENV["BUILDER_NAME"] = "Homebrew"
-    ENV["BUILDER_EMAIL"] = ""
+    ENV["BUILDER_EMAIL"] = "homebrew@brew.sh"
     system "make"
   end
 end
