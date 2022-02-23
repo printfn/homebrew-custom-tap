@@ -10,6 +10,8 @@ class Checkmake < Formula
   depends_on "go" => :build
 
   def install
+    ENV["BUILDER_NAME"] = "Homebrew"
+    ENV["EMAIL"] = ""
     system "make"
   end
 end
