@@ -13,5 +13,7 @@ class Checkmake < Formula
     ENV["BUILDER_NAME"] = "Homebrew"
     ENV["BUILDER_EMAIL"] = "homebrew@brew.sh"
     system "make"
+    bin.install "checkmake"
+    man1.install "checkmake.1"
   end
 end
