@@ -17,7 +17,7 @@ class Checkmake < Formula
     man1.install "checkmake.1"
   end
 
-  do test
+  test do
     sh = testpath/"Makefile"
     sh.write <<~EOS
       clean:
