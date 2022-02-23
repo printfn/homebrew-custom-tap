@@ -6,8 +6,8 @@ class Checkmake < Formula
   license "MIT"
   head "https://github.com/mrtazz/checkmake.git", branch: "main"
 
-  depends_on "pandoc"
   depends_on "go" => :build
+  depends_on "pandoc"
 
   def install
     ENV["BUILDER_NAME"] = "Homebrew"
@@ -15,5 +15,28 @@ class Checkmake < Formula
     system "make"
     bin.install "checkmake"
     man1.install "checkmake.1"
+  end
+
+  do test
+    sh = testpath/"Makefile"
+    sh.write <<~EOS
+      clean:
+      \trm bar
+      \trm foo
+
+      foo: bar
+      \ttouch foo
+
+      bar:
+      \ttouch bar
+
+      all: foo
+
+      test:
+      \t@echo test
+
+      .PHONY: clean test
+    EOS
+    assert_match "phonydeclared", shell_output("#{bin}/checkmake #{sh}", 2)
   end
 end
