@@ -1,8 +1,8 @@
 class Hextoggle < Formula
   desc "Easily view and edit hex files"
   homepage "https://github.com/printfn/hextoggle"
-  url "https://github.com/printfn/hextoggle/archive/refs/tags/v1.0.1.tar.gz", branch: "main"
-  sha256 "083917ebc18d680398e8589aa791f362ce718aeb93344910083bf0d17b88f6a7"
+  url "https://github.com/printfn/hextoggle/archive/refs/tags/v1.0.2.tar.gz", branch: "main"
+  sha256 "db275f96101165554ac0ca112c13fcfa7cf9f3478b12f31e7de69f82244c53ad"
   license "GPL-3.0-or-later"
   head "https://github.com/printfn/hextoggle.git", branch: "main"
 
