@@ -43,7 +43,7 @@ class CurlAT7761 < Formula
   depends_on "libssh2"
   depends_on "nghttp2"
   depends_on "openldap"
-  depends_on "openssl@1.1"
+  depends_on "openssl-insecure@1.0.2"
   depends_on "rtmpdump"
   depends_on "zstd"
 
@@ -58,7 +58,7 @@ class CurlAT7761 < Formula
       --disable-dependency-tracking
       --disable-silent-rules
       --prefix=#{prefix}
-      --with-ssl=#{Formula["openssl@1.1"].opt_prefix}
+      --with-ssl=#{Formula["openssl-insecure@1.0.2"].opt_prefix}
       --without-ca-bundle
       --without-ca-path
       --with-ca-fallback
@@ -80,6 +80,8 @@ class CurlAT7761 < Formula
       args << "--with-gssapi=#{Formula["krb5"].opt_prefix}"
     end
 
+    ENV["PKG_CONFIG_PATH"] = "/usr/local/opt/openssl-insecure@1.0.2/lib/pkgconfig:#{ENV["PKG_CONFIG_PATH"]}"
+    ohai ENV["PKG_CONFIG_PATH"]
     system "./configure", *args
     system "make", "install"
     system "make", "install", "-C", "scripts"
