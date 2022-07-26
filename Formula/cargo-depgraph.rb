@@ -1,8 +1,8 @@
 class CargoDepgraph < Formula
   desc "Creates dependency graphs for cargo projects"
   homepage "https://sr.ht/~jplatte/cargo-depgraph/"
-  url "https://git.sr.ht/~jplatte/cargo-depgraph/archive/v1.2.2.tar.gz"
-  sha256 "7f56739ca920d3be998bfd2365fd0f5d468b9297352269ea043169ae87005349"
+  url "https://git.sr.ht/~jplatte/cargo-depgraph/archive/v1.2.5.tar.gz"
+  sha256 "75e6b716996062518bc556607929abce52dffdd97422275b41079e971f9459e2"
   license "GPL-3.0-or-later"
 
   livecheck do
