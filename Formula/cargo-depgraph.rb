@@ -24,14 +24,20 @@ class CargoDepgraph < Formula
         [package]
         name = "demo-crate"
         version = "0.1.0"
+
+        [dependencies]
+        rustc-std-workspace-core = "1.0.0" # explicitly empty crate for testing
       EOS
       expected = <<~EOS
         digraph {
             0 [ label = "demo-crate" shape = box]
+            1 [ label = \"rustc-std-workspace-core\" ]
+            0 -> 1 [ ]
         }
 
       EOS
-      assert_equal expected, shell_output("PATH=#{Formula["rust"].bin}:$PATH cargo depgraph")
+      output = shell_output("#{bin}/cargo-depgraph depgraph")
+      assert_equal expected, output
     end
   end
 end
