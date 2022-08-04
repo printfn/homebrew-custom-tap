@@ -37,6 +37,14 @@ class Veloren < Formula
                                                 VELOREN_ASSETS: "#{libexec}/assets"
   end
 
+  def caveats
+    <<~EOS
+      To start Veloren, run `veloren-voxygen`.
+
+      A multiplayer server can be started by running `veloren-server-cli`.
+    EOS
+  end
+
   test do
     output = shell_output("echo \"shutdown graceful 0\" | #{bin}/veloren-server-cli")
     assert_match "Server is ready to accept connections", output
