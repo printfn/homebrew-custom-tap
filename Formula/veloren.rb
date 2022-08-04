@@ -5,8 +5,6 @@ class Veloren < Formula
   sha256 "6864e9ac190b07eae7d5ea966472d120037153af086f64cc8a7966a59a5f2cfe"
   license "GPL-3.0-or-later"
 
-  # TODO: fix assets dir, fix git revision hash
-
   depends_on "cmake" => :build
   depends_on "ninja" => :build
   depends_on "rustup-init" => :build
@@ -20,8 +18,15 @@ class Veloren < Formula
     ENV["NIX_GIT_HASH"] = "00000000/#{time.strftime("%Y-%m-%d-%H:%M")}"
     ENV["NIX_GIT_TAG"] = "v#{version}"
 
-    system "cargo", "install", *std_cargo_args(path: "voxygen")
-    system "cargo", "install", *std_cargo_args(path: "server-cli")
+    system "cargo", "install", *std_cargo_args(root: libexec, path: "voxygen")
+    system "cargo", "install", *std_cargo_args(root: libexec, path: "server-cli")
+
+    libexec.install "assets"
+
+    (bin/"veloren-voxygen").write_env_script "#{libexec}/bin/veloren-voxygen",
+                                             VELOREN_ASSETS: "#{libexec}/assets"
+    (bin/"veloren-server-cli").write_env_script "#{libexec}/bin/veloren-server-cli",
+                                                VELOREN_ASSETS: "#{libexec}/assets"
   end
 
   test do
