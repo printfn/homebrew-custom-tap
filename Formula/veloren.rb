@@ -2,23 +2,30 @@ class Veloren < Formula
   desc "Multiplayer voxel RPG"
   homepage "https://veloren.net"
   url "https://gitlab.com/veloren/veloren.git",
-    tag:      "v0.13.0",
-    revision: "34ae5b9df73f367fa34350337ebba71711f48b86"
+      tag:      "v0.13.0",
+      revision: "34ae5b9df73f367fa34350337ebba71711f48b86"
   license "GPL-3.0-or-later"
 
   depends_on "cmake" => :build
-  depends_on "git-lfs" => :build
   depends_on "ninja" => :build
   depends_on "rustup-init" => :build
 
-  def install
-    system "git", "lfs", "install", "--local"
-    system "git", "lfs", "pull"
+  on_linux do
+    depends_on "pkg-config" => :build
+    depends_on "python@3.10" => :build
+    depends_on "alsa-lib"
+    depends_on "libxcb"
+    depends_on "libxkbcommon"
+    depends_on "systemd" # for libudev
+  end
 
-    # make sure the assets have been downloaded correctly with git-lfs
-    unless `file assets/voxygen/background/bg_main.jpg`.match?(/JPEG image/i)
-      odie "assets have not been downloaded correctly"
-    end
+  resource "assets" do
+    url "https://gitlab.com/veloren/veloren/-/archive/v0.13.0/veloren-v0.13.0.tar.gz?path=assets"
+    sha256 "df22fd58b2e846eb64eb12e2b75c377bdec5caa61fc1cff0bc54dd9765cafde9"
+  end
+
+  def install
+    resource("assets").stage { libexec.install "assets" }
 
     # this will install the necessary cargo/rustup toolchain bits in HOMEBREW_CACHE
     system Formula["rustup-init"].bin/"rustup-init", "-qy", "--no-modify-path"
@@ -29,24 +36,14 @@ class Veloren < Formula
     system "cargo", "install", *std_cargo_args(root: libexec, path: "voxygen")
     system "cargo", "install", *std_cargo_args(root: libexec, path: "server-cli")
 
-    libexec.install "assets"
-
-    (bin/"veloren-voxygen").write_env_script "#{libexec}/bin/veloren-voxygen",
-                                             VELOREN_ASSETS: "#{libexec}/assets"
-    (bin/"veloren-server-cli").write_env_script "#{libexec}/bin/veloren-server-cli",
-                                                VELOREN_ASSETS: "#{libexec}/assets"
-  end
-
-  def caveats
-    <<~EOS
-      To start Veloren, run `veloren-voxygen`.
-
-      A multiplayer server can be started by running `veloren-server-cli`.
-    EOS
+    (bin/"veloren-voxygen").write_env_script libexec/"bin/veloren-voxygen",
+                                             VELOREN_ASSETS: libexec/"assets"
+    (bin/"veloren-server-cli").write_env_script libexec/"bin/veloren-server-cli",
+                                                VELOREN_ASSETS: libexec/"assets"
   end
 
   test do
-    output = shell_output("echo \"shutdown graceful 0\" | #{bin}/veloren-server-cli")
+    output = pipe_output(bin/"veloren-server-cli", "shutdown graceful 0")
     assert_match "Server is ready to accept connections", output
   end
 end
