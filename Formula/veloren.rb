@@ -10,6 +10,11 @@ class Veloren < Formula
   depends_on "ninja" => :build
   depends_on "rustup-init" => :build
 
+  on_macos do
+    # build failure on 10.15 due to coreaudio-sys crate
+    depends_on macos: :big_sur
+  end
+
   on_linux do
     depends_on "pkg-config" => :build
     depends_on "python@3.10" => :build
