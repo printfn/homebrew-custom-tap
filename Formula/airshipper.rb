@@ -1,5 +1,5 @@
 class Airshipper < Formula
-  desc "Installer for Veloren, a multiplayer voxel RPG"
+  desc "Launcher for Veloren, a multiplayer voxel RPG"
   homepage "https://veloren.net"
   url "https://gitlab.com/veloren/airshipper/-/archive/v0.7.0/airshipper-v0.7.0.tar.gz"
   sha256 "dd68535fe6a7a4f01186b590c33e7b12bc79c8aa8a96529e22f9321ea2a06325"
