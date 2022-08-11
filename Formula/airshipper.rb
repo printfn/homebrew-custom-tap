@@ -13,6 +13,11 @@ class Airshipper < Formula
 
   depends_on "rust" => :build
 
+  on_linux do
+    depends_on "libxkbcommon"
+    depends_on "openssl@3"
+  end
+
   def install
     system "cargo", "install", *std_cargo_args(path: "client")
     system "cargo", "install", *std_cargo_args(path: "server")
