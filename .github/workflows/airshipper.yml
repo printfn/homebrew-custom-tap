@@ -16,9 +16,10 @@ jobs:
       run: |
         brew install --build-bottle --verbose printfn/custom-tap/airshipper
         brew bottle --no-rebuild printfn/custom-tap/airshipper
+        zip airshipper-bottle.zip airshipper*
     - name: Upload bottle
       uses: actions/upload-artifact@v2.3.1
       with:
         name: airshipper-bottle
-        path: airshipper-*.bottle.tar.gz # e.g. airshipper--0.7.0.monterey.bottle.tar.gz
+        path: airshipper-bottle.zip
         if-no-files-found: error
