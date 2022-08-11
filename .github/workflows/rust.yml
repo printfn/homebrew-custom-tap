@@ -1,0 +1,24 @@
+name: Rust
+
+on:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - name: Build Homebrew bottle
+      run: |
+        brew install --build-bottle printfn/custom-tap/airshipper
+        brew bottle --no-rebuild printfn/custom-tap/airshipper
+    - name: Upload bottle
+      uses: actions/upload-artifact@v2.3.1
+      with:
+        name: airshipper-bottle
+        path: airshipper-*.bottle.tar.gz # e.g. airshipper--0.7.0.monterey.bottle.tar.gz
+        if-no-files-found: error
