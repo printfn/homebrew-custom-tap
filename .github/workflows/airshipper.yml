@@ -1,4 +1,4 @@
-name: Rust
+name: Airshipper
 
 on:
   workflow_dispatch:
@@ -9,12 +9,12 @@ env:
 jobs:
   build:
 
-    runs-on: macos-latest
+    runs-on: macos-12
 
     steps:
     - name: Build Homebrew bottle
       run: |
-        brew install --build-bottle printfn/custom-tap/airshipper
+        brew install --build-bottle --verbose printfn/custom-tap/airshipper
         brew bottle --no-rebuild printfn/custom-tap/airshipper
     - name: Upload bottle
       uses: actions/upload-artifact@v2.3.1
