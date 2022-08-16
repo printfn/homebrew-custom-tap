@@ -1,8 +1,8 @@
 class PicoSdk < Formula
   desc "Raspberry Pi Pico SDK"
   homepage "https://github.com/raspberrypi/pico-sdk"
-  url "https://github.com/raspberrypi/pico-sdk/archive/refs/tags/1.3.0.tar.gz"
-  sha256 "9fd9e5c180fd75b5aa683f2883eb313eaf4151a18d1ae04ac3667b2fc525ec82"
+  url "https://github.com/raspberrypi/pico-sdk/archive/refs/tags/1.4.0.tar.gz"
+  sha256 "951d1d316d9a01c734c5ec53e766a2d03fb44f405a2494bac9a8a7c178e25918"
   license "BSD-3-Clause"
   head "https://github.com/raspberrypi/pico-sdk.git", branch: "main"
 
