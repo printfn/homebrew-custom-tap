@@ -16,7 +16,7 @@ class Armagetronad < Formula
   depends_on "sdl_mixer"
 
   patch do
-    url "https://raw.githubusercontent.com/printfn/homebrew-custom-tap/main/patches/armagetronad-aaf6296d1487d66f3c2cb0b5bf126cfe5b2c26e8482175f69b744ffde3e6fc8e.diff"
+    url "https://raw.githubusercontent.com/printfn/homebrew-custom-tap/71b607e08ba827ac180903c2dc5ed0c37e2c33a6/patches/armagetronad-aaf6296d1487d66f3c2cb0b5bf126cfe5b2c26e8482175f69b744ffde3e6fc8e.diff"
     sha256 "aaf6296d1487d66f3c2cb0b5bf126cfe5b2c26e8482175f69b744ffde3e6fc8e"
   end
 
