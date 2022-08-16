@@ -4,12 +4,12 @@ class PicoSdk < Formula
   url "https://github.com/raspberrypi/pico-sdk/archive/refs/tags/1.4.0.tar.gz"
   sha256 "951d1d316d9a01c734c5ec53e766a2d03fb44f405a2494bac9a8a7c178e25918"
   license "BSD-3-Clause"
-  head "https://github.com/raspberrypi/pico-sdk.git", branch: "main"
+  head "https://github.com/raspberrypi/pico-sdk.git", branch: "master"
 
   depends_on "cmake" => :test
 
   def install
-    (share/"pico-sdk").install Dir["*"]
+    pkgshare.install Dir["*"]
   end
 
   def caveats
@@ -49,7 +49,7 @@ class PicoSdk < Formula
       # create map/bin/hex/uf2 file in addition to ELF.
       pico_add_extra_outputs(hello_world)
     EOS
-    cp share/"pico-sdk"/"external"/"pico_sdk_import.cmake", testpath
+    cp pkgshare/"external"/"pico_sdk_import.cmake", testpath
     ENV["PICO_SDK_PATH"] = "#{HOMEBREW_PREFIX}/share/pico-sdk"
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args
     system "make", "hello_world"
