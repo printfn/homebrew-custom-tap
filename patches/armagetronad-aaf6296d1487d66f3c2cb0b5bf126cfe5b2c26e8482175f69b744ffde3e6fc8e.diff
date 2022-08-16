@@ -1,0 +1,351 @@
+diff --git a/src/engine/eCamera.cpp b/src/engine/eCamera.cpp
+index 056ef9b9..e6271293 100644
+--- a/src/engine/eCamera.cpp
++++ b/src/engine/eCamera.cpp
+@@ -1225,7 +1225,7 @@ bool eCamera::AutoSwitchIncam(){
+         return false;
+ }
+ 
+-static inline void makefinite(REAL &x,REAL y=2){if (!finite(x)) x=y;}
++static inline void makefinite(REAL &x,REAL y=2){if (!isfinite(x)) x=y;}
+ static inline void makefinite(eCoord &x){makefinite(x.x);makefinite(x.y);}
+ 
+ // Smart camera settings
+diff --git a/src/engine/eGameObject.cpp b/src/engine/eGameObject.cpp
+index f5364650..ca3ab17f 100644
+--- a/src/engine/eGameObject.cpp
++++ b/src/engine/eGameObject.cpp
+@@ -168,7 +168,7 @@ void eGameObject::Move( const eCoord &dest, REAL startTime, REAL endTime, bool u
+ #ifdef DEBUG
+     grid->Check();
+ #endif
+-    if (!finite(dest.x) || !finite(dest.y))
++    if (!isfinite(dest.x) || !isfinite(dest.y))
+     {
+         st_Breakpoint();
+         return;
+@@ -185,7 +185,7 @@ void eGameObject::Move( const eCoord &dest, REAL startTime, REAL endTime, bool u
+     grid->Range(stop.NormSquared());
+ 
+ #ifdef DEBUG
+-    if (!finite(stop.x) || !finite(stop.y))
++    if (!isfinite(stop.x) || !isfinite(stop.y))
+     {
+         st_Breakpoint();
+ 
+diff --git a/src/engine/eGrid.cpp b/src/engine/eGrid.cpp
+index 0549ebb3..e80d7844 100644
+--- a/src/engine/eGrid.cpp
++++ b/src/engine/eGrid.cpp
+@@ -730,7 +730,7 @@ ePoint * eGrid::DrawLine(ePoint *start, const eCoord &end, eWall *w, bool change
+     //tJUST_CONTROLLED_PTR< eWall > wal( w );
+ 
+     // sanity check
+-    if ( !finite( end.x ) || !finite( end.y ) )
++    if ( !isfinite( end.x ) || !isfinite( end.y ) )
+         return start;
+ 
+     Range(end.NormSquared());
+diff --git a/src/engine/eTimer.cpp b/src/engine/eTimer.cpp
+index a89f228b..db15babf 100644
+--- a/src/engine/eTimer.cpp
++++ b/src/engine/eTimer.cpp
+@@ -383,7 +383,7 @@ void eTimer::SyncTime(){
+         REAL smooth = timeStep * ( .5 + extraSmooth );
+         startTimeSmoothedOffset_ = ( startTimeSmoothedOffset_ + startTimeOffset * smooth )/(1 + smooth);
+ 
+-        if ( !finite( startTimeSmoothedOffset_ ) )
++        if ( !isfinite( startTimeSmoothedOffset_ ) )
+         {
+             // emergency, smoothing the timer produced infinite results
+             st_Breakpoint();
+diff --git a/src/network/nNetwork.cpp b/src/network/nNetwork.cpp
+index cc1c10bf..26d1c1ee 100644
+--- a/src/network/nNetwork.cpp
++++ b/src/network/nNetwork.cpp
+@@ -1427,7 +1427,7 @@ nMessage& nMessage::operator>>(REAL &x){
+ 
+ #ifdef DEBUG
+ #ifndef WIN32
+-    if (!finite(x))
++    if (!isfinite(x))
+         st_Breakpoint();
+     // con << " , x= " << x << '\n';
+ #endif
+diff --git a/src/network/nSocket.cpp b/src/network/nSocket.cpp
+index d80f908e..5631f6a6 100644
+--- a/src/network/nSocket.cpp
++++ b/src/network/nSocket.cpp
+@@ -1518,7 +1518,7 @@ int nSocket::Create( void )
+     sn_InitOSNetworking();
+ 
+     int socktype = socktype_;
+-#ifndef WIN32
++#if !(defined(WIN32) || defined(MACOSX))
+     socktype |= SOCK_CLOEXEC;
+ #endif
+ 
+diff --git a/src/tools/tMath.h b/src/tools/tMath.h
+index 8bf3a0d1..e62e663c 100644
+--- a/src/tools/tMath.h
++++ b/src/tools/tMath.h
+@@ -43,7 +43,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ 
+ inline bool good( REAL f )
+ {
+-    return finite( f );
++    return isfinite( f );
+ }
+ 
+ #endif
+diff --git a/src/tron/gCycle.cpp b/src/tron/gCycle.cpp
+index 80e19b58..acb67870 100644
+--- a/src/tron/gCycle.cpp
++++ b/src/tron/gCycle.cpp
+@@ -110,7 +110,7 @@ extern REAL sg_suicideTimeout;
+ static inline void clamp(REAL &c, REAL min, REAL max){
+     tASSERT(min < max);
+ 
+-    if (!finite(c))
++    if (!isfinite(c))
+         c = 0;
+ 
+     if (c<min)
+@@ -1204,7 +1204,7 @@ void gDestination::CopyFrom(const gCycleMovement &other)
+     turns 		= other.GetTurns();
+ 
+ #ifdef DEBUG
+-    if (!finite(gameTime) || !finite(speed) || !finite(distance))
++    if (!isfinite(gameTime) || !isfinite(speed) || !isfinite(distance))
+         st_Breakpoint();
+ #endif
+     if ( other.Owner() && other.Player() )
+@@ -1957,7 +1957,7 @@ bool gCycleExtrapolator::TimestepCore(REAL currentTime, bool calculateAccelerati
+     // correct distance
+     // distance = dest->distance - DistanceToDestination( *dest );
+     // REAL distanceBefore = GetDistance();
+-    tASSERT(finite(distance));
++    tASSERT(isfinite(distance));
+ 
+     // delegate
+     bool ret = false;
+@@ -2393,12 +2393,12 @@ void gCycle::MyInitAfterCreation(){
+ 
+ void gCycle::InitAfterCreation(){
+ #ifdef DEBUG
+-    if (!finite(Speed()))
++    if (!isfinite(Speed()))
+         st_Breakpoint();
+ #endif
+     gCycleMovement::InitAfterCreation();
+ #ifdef DEBUG
+-    if (!finite(Speed()))
++    if (!isfinite(Speed()))
+         st_Breakpoint();
+ #endif
+     MyInitAfterCreation();
+@@ -2877,9 +2877,9 @@ REAL sg_GetSparksDistance();
+ 
+ 
+ bool gCycle::TimestepCore(REAL currentTime, bool calculateAcceleration ){
+-    if (!finite(skew))
++    if (!isfinite(skew))
+         skew=0;
+-    if (!finite(skewDot))
++    if (!isfinite(skewDot))
+         skewDot=0;
+ 
+     // eCoord oldpos=pos;
+@@ -2922,7 +2922,7 @@ bool gCycle::TimestepCore(REAL currentTime, bool calculateAcceleration ){
+     //if ( 0 )
+ 
+     REAL animts=currentTime-lastTimeAnim;
+-    if (animts<0 || !finite(animts))
++    if (animts<0 || !isfinite(animts))
+         animts=0;
+     else
+         lastTimeAnim=currentTime;
+@@ -4256,8 +4256,8 @@ void gCycle::Render(const eCamera *cam){
+     glProgramLocalParameter4fARB_ptr = (glProgramLocalParameter4fARB_Func) SDL_GL_GetProcAddress("glProgramLocalParameter4fARB");
+ #endif
+ #endif    
+-    if (!finite(z) || !finite(pos.x) ||!finite(pos.y)||!finite(dir.x)||!finite(dir.y)
+-            || !finite(skew))
++    if (!isfinite(z) || !isfinite(pos.x) ||!isfinite(pos.y)||!isfinite(dir.x)||!isfinite(dir.y)
++            || !isfinite(skew))
+         st_Breakpoint();
+     if (Alive()){
+         //con << "Drawing cycle at " << pos << '\n';
+@@ -5528,7 +5528,7 @@ void gCycle::ReadSync( nMessage &m )
+         REAL ratio = (interpolatedDistance - bef->distance)/
+                      (aft->distance - bef->distance);
+ 
+-        if (!finite(ratio))
++        if (!isfinite(ratio))
+             ratio = 0;
+ 
+         // interpolate when the cycle was at the position the sync message was sent
+diff --git a/src/tron/gCycleMovement.cpp b/src/tron/gCycleMovement.cpp
+index 78ba3b88..962d2e49 100644
+--- a/src/tron/gCycleMovement.cpp
++++ b/src/tron/gCycleMovement.cpp
+@@ -455,7 +455,7 @@ static tSettingItem<int> conf_sgCycleMaxRefCount ("CYCLE_MAX_REFCOUNT", sg_cycle
+ static inline bool clamp(REAL &c, REAL min, REAL max){
+     tASSERT(min <= max);
+ 
+-    if (!finite(c))
++    if (!isfinite(c))
+     {
+         c = 0;
+         return true;
+@@ -2836,7 +2836,7 @@ void gCycleMovement::CopyFrom( const gCycleMovement & other )
+     windingNumber_          = other.windingNumber_;
+     windingNumberWrapped_   = other.windingNumberWrapped_;
+ 
+-    tASSERT(finite(distance));
++    tASSERT(isfinite(distance));
+ 
+     // std::cout << "copy: " << brakingReservoir << ":" << braking << "\n";
+ 
+@@ -2881,7 +2881,7 @@ void gCycleMovement::CopyFrom( const SyncData & sync, const gCycleMovement & oth
+     brakingReservoir= sync.brakingReservoir;
+     // std::cout << "fromsync: " << brakingReservoir << ":" << braking << "\n";
+ 
+-    tASSERT(finite(distance));
++    tASSERT(isfinite(distance));
+ 
+     // reset winding number and acceleration
+     this->SetWindingNumberWrapped( Grid()->DirectionWinding(dirDrive) );
+@@ -2935,12 +2935,12 @@ void gCycleMovement::CopyFrom( const SyncData & sync, const gCycleMovement & oth
+ void gCycleMovement::InitAfterCreation( void )
+ {
+ #ifdef DEBUG
+-    if (!finite(verletSpeed_))
++    if (!isfinite(verletSpeed_))
+         st_Breakpoint();
+ #endif
+     eNetGameObject::InitAfterCreation();
+ #ifdef DEBUG
+-    if (!finite(verletSpeed_))
++    if (!isfinite(verletSpeed_))
+         st_Breakpoint();
+ #endif
+     MyInitAfterCreation();
+@@ -3690,7 +3690,7 @@ bool gCycleMovement::TimestepCore( REAL currentTime, bool calculateAcceleration
+     clamp(ts, -10, 10);
+ 
+     REAL step=verletSpeed_*ts;
+-    tASSERT(finite(step));
++    tASSERT(isfinite(step));
+ 
+     int numTries = 0;
+     bool emergency = false;
+@@ -4044,8 +4044,8 @@ bool gCycleMovement::TimestepCore( REAL currentTime, bool calculateAcceleration
+         }
+ #endif
+ 
+-        tASSERT(finite(distance));
+-        tASSERT(finite(step));
++        tASSERT(isfinite(distance));
++        tASSERT(isfinite(step));
+         distance += step;
+         lastTimeAlive_ = currentTime;
+     }
+@@ -4113,9 +4113,9 @@ bool gCycleMovement::TimestepCore( REAL currentTime, bool calculateAcceleration
+                 rubber = rubber_granted;
+ 
+                 // update distance to include the really covered space
+-                tASSERT(finite(distance));
++                tASSERT(isfinite(distance));
+                 distance += eCoord::F( dirDrive, pos - lastPos )/dirDrive.NormSquared();
+-                tASSERT(finite(distance));
++                tASSERT(isfinite(distance));
+ 
+                 throw;
+             }
+@@ -4226,7 +4226,7 @@ bool gCycleMovement::TimestepCore( REAL currentTime, bool calculateAcceleration
+     if ( !sg_verletIntegration.Supported() )
+         this->ApplyAcceleration( ts );
+ 
+-    tASSERT(finite(distance));
++    tASSERT(isfinite(distance));
+ 
+     tASSERT( rubber >= 0 );
+ 
+@@ -4285,7 +4285,7 @@ void gCycleMovement::MyInitAfterCreation( void )
+ 
+     lastTimeAlive_ = lastTime;
+ 
+-    if (!finite(verletSpeed_)){
++    if (!isfinite(verletSpeed_)){
+         st_Breakpoint();
+         verletSpeed_ = 1;
+     }
+diff --git a/src/tron/gExplosion.cpp b/src/tron/gExplosion.cpp
+index 17a06393..b1daf712 100644
+--- a/src/tron/gExplosion.cpp
++++ b/src/tron/gExplosion.cpp
+@@ -41,7 +41,7 @@ static tList< gExplosion > sg_Explosions;
+ 
+ static void clamp01(REAL &c)
+ {
+-    if (!finite(c))
++    if (!isfinite(c))
+         c = 0.5;
+ 
+     if (c<0)
+diff --git a/src/tron/gWall.cpp b/src/tron/gWall.cpp
+index 5db094e2..08510ab0 100644
+--- a/src/tron/gWall.cpp
++++ b/src/tron/gWall.cpp
+@@ -585,7 +585,7 @@ void gPlayerWall::Flip(){
+ }
+ 
+ static void clamp01(REAL &c){
+-    if (!finite(c))
++    if (!isfinite(c))
+         c = 0.5;
+ 
+     if (c<0)
+@@ -1580,10 +1580,10 @@ void gNetPlayerWall::MyInitAfterCreation()
+ 
+     //w=
+ #ifdef DEBUG
+-    if (!finite(end.x) || !finite(end.y))
++    if (!isfinite(end.x) || !isfinite(end.y))
+         st_Breakpoint();
+ 
+-    if (!finite(beg.x) || !finite(beg.y))
++    if (!isfinite(beg.x) || !isfinite(beg.y))
+         st_Breakpoint();
+ #endif
+ 
+@@ -1633,7 +1633,7 @@ void gNetPlayerWall::Update(REAL Tend,REAL dend){
+ 		end=beg + dir*(dend-dbegin);
+ 
+ #ifdef DEBUG
+-		if (!finite(end.x) || !finite(end.y))
++		if (!isfinite(end.x) || !isfinite(end.y))
+ 			st_Breakpoint();
+ #endif
+ 
+@@ -1682,7 +1682,7 @@ void gNetPlayerWall::real_Update(REAL Tend,const eCoord &pend, bool force )
+     }
+ 
+ #ifdef DEBUG
+-    if (!finite(end.x) || !finite(end.y))
++    if (!isfinite(end.x) || !isfinite(end.y))
+         st_Breakpoint();
+ #endif
+ 
+@@ -2302,8 +2302,8 @@ void gNetPlayerWall::Check() const
+     for ( i = coords_.Len() -1 ; i>=0; --i )
+     {
+         gPlayerWallCoord* coords = &( coords_( i ) );
+-        tASSERT( finite( coords[0].Pos ) );
+-        tASSERT( finite( coords[0].Time ) );
++        tASSERT( isfinite( coords[0].Pos ) );
++        tASSERT( isfinite( coords[0].Time ) );
+     }
+ #endif
+ }

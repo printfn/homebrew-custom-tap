@@ -5,41 +5,42 @@ class Armagetronad < Formula
   sha256 "59b6c7c01ce3f8cca5437e33f974a637529541a11aa4f52c1a5c17499e26f6a1"
   license "GPL-2.0-or-later"
 
+  livecheck do
+    url "http://www.armagetronad.org/downloads.php"
+    regex(/href=.*?armagetronad[._-]v?(\d+(?:\.\d+)+)\.t/i)
+  end
+
   depends_on "libpng"
   depends_on "sdl"
   depends_on "sdl_image"
   depends_on "sdl_mixer"
 
-  patch :p0, :DATA
+  patch do
+    url "https://raw.githubusercontent.com/printfn/homebrew-custom-tap/main/patches/armagetronad-aaf6296d1487d66f3c2cb0b5bf126cfe5b2c26e8482175f69b744ffde3e6fc8e.diff"
+    sha256 "aaf6296d1487d66f3c2cb0b5bf126cfe5b2c26e8482175f69b744ffde3e6fc8e"
+  end
 
   def install
     ENV["LDFLAGS"] = "-framework OpenGL"
-    system "./configure", "--disable-etc", "--disable-uninstall",
-      "--disable-games", "--enable-music",
-      "--prefix=#{prefix}", "--exec-prefix=#{prefix}"
+    system "./configure", *std_configure_args,
+                          "--disable-etc",
+                          "--disable-uninstall",
+                          "--disable-games",
+                          "--enable-automakedefaults",
+                          "--enable-music"
     system "make"
     system "make", "install"
-  end
 
-  def caveats
-    <<~EOS
-      Armagetron Advanced has been installed to #{bin}/armagetronad
-    EOS
+    mkdir libexec
+    mv bin/"armagetronad", libexec
+
+    (bin/"armagetronad").write <<~SH
+      #!/bin/bash
+      exec #{libexec}/armagetronad --datadir #{share}/"armagetronad" --configdir #{etc}/"armagetronad" "$@"
+    SH
   end
 
   test do
     system "false"
   end
 end
-
-__END__
---- src/network/nSocket.cpp.orig
-+++ src/network/nSocket.cpp
-@@ -1518,7 +1518,7 @@ int nSocket::Create( void )
-     sn_InitOSNetworking();
- 
-     int socktype = socktype_;
--#ifndef WIN32
-+#if !(defined(WIN32) || defined(MACOSX))
-     socktype |= SOCK_CLOEXEC;
- #endif
