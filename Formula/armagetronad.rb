@@ -10,6 +10,11 @@ class Armagetronad < Formula
     regex(/href=.*?armagetronad[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
+  bottle do
+    root_url "https://github.com/printfn/homebrew-custom-tap/releases/download/armagetronad-0.2.9.1.0"
+    sha256 monterey: "b9fcddc482533b37609bc493a3df8ec6564eaf3d8d45ad1af702aec5b1ca5179"
+  end
+
   depends_on "libpng"
   depends_on "sdl"
   depends_on "sdl_image"
