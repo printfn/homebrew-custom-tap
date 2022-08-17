@@ -35,7 +35,7 @@ class Armagetronad < Formula
 
     (bin/"armagetronad").write <<~SH
       #!/bin/bash
-      exec #{libexec}/armagetronad --datadir #{share}/"armagetronad" --configdir #{etc}/"armagetronad" "$@"
+      exec #{libexec}/armagetronad --datadir #{pkgshare} --configdir #{etc}/armagetronad "$@"
     SH
   end
 
