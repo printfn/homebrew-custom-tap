@@ -1,4 +1,4 @@
-class Armagetronad < Formula
+class ArmagetronadDedicated < Formula
   desc "Tron clone in 3D"
   homepage "http://www.armagetronad.org"
   url "https://launchpad.net/armagetronad/0.2.9/0.2.9.1.0/+download/armagetronad-0.2.9.1.0.tbz"
@@ -11,9 +11,6 @@ class Armagetronad < Formula
   end
 
   depends_on "libpng"
-  depends_on "sdl"
-  depends_on "sdl_image"
-  depends_on "sdl_mixer"
 
   patch do
     url "https://raw.githubusercontent.com/printfn/homebrew-custom-tap/71b607e08ba827ac180903c2dc5ed0c37e2c33a6/patches/armagetronad-aaf6296d1487d66f3c2cb0b5bf126cfe5b2c26e8482175f69b744ffde3e6fc8e.diff"
@@ -21,21 +18,22 @@ class Armagetronad < Formula
   end
 
   def install
-    ENV["LDFLAGS"] = "-framework OpenGL"
     system "./configure", *std_configure_args,
                           "--disable-etc",
                           "--disable-uninstall",
                           "--disable-games",
-                          "--enable-automakedefaults",
-                          "--enable-music",
+                          "--disable-glout",
                           "--disable-sysinstall",
                           "--bindir=#{libexec}"
     system "make"
     system "make", "install"
 
-    (bin/"armagetronad").write <<~SH
+    rm Dir["#{share}/metainfo/*"]
+    rm Dir["#{share}/icons/*"]
+
+    (bin/"armagetronad-dedicated").write <<~SH
       #!/bin/bash
-      exec #{libexec}/armagetronad --datadir #{share}/"armagetronad" --configdir #{etc}/"armagetronad" "$@"
+      exec #{libexec}/armagetronad-dedicated --datadir #{pkgshare} --configdir #{etc}/"armagetronad-dedicated" "$@"
     SH
   end
 
