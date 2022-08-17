@@ -14,7 +14,6 @@ class Armagetronad < Formula
   depends_on "sdl"
   depends_on "sdl_image"
   depends_on "sdl_mixer"
-  depends_on "libxml2"
 
   patch do
     url "https://raw.githubusercontent.com/printfn/homebrew-custom-tap/71b607e08ba827ac180903c2dc5ed0c37e2c33a6/patches/armagetronad-aaf6296d1487d66f3c2cb0b5bf126cfe5b2c26e8482175f69b744ffde3e6fc8e.diff"
