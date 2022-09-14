@@ -16,7 +16,7 @@ class Pijul < Formula
 
   def install
     system "tar", "--strip-components", "1", "-xzvf", "pijul-#{version}.crate"
-    system "cargo", "install", *std_cargo_args
+    system "cargo", "install", "--features", "git", *std_cargo_args
   end
 
   test do
